@@ -89,6 +89,9 @@ namespace Microsoft.ML.Runtime.PipelineInference
             public string Name { get; }
             public bool IsMaximizing { get; }
 
+            public SupportedMetric()
+            {
+            }
             private SupportedMetric(string name, bool isMaximizing)
             {
                 Name = name;
@@ -218,42 +221,42 @@ namespace Microsoft.ML.Runtime.PipelineInference
                 Desc = "State of an AutoML search and search space.")]
             public sealed class Arguments : ISupportAutoMlStateFactory
             {
-                // REVIEW: These should be the same as SupportedMetrics above. Not sure how to reference that class,
-                // without the C# API generator trying to create a version of that class in the API as well.
-                public enum Metrics
-                {
-                    Auc,
-                    AccuracyMicro,
-                    AccuracyMacro,
-                    L2,
-                    F1,
-                    AuPrc,
-                    TopKAccuracy,
-                    Rms,
-                    LossFn,
-                    RSquared,
-                    LogLoss,
-                    LogLossReduction,
-                    Ndcg,
-                    Dcg,
-                    PositivePrecision,
-                    PositiveRecall,
-                    NegativePrecision,
-                    NegativeRecall,
-                    DrAtK,
-                    DrAtPFpr,
-                    DrAtNumPos,
-                    NumAnomalies,
-                    ThreshAtK,
-                    ThreshAtP,
-                    ThreshAtNumPos,
-                    Nmi,
-                    AvgMinScore,
-                    Dbi
-                };
+                //// REVIEW: These should be the same as SupportedMetrics above. Not sure how to reference that class,
+                //// without the C# API generator trying to create a version of that class in the API as well.
+                //public enum Metrics
+                //{
+                //    Auc,
+                //    AccuracyMicro,
+                //    AccuracyMacro,
+                //    L2,
+                //    F1,
+                //    AuPrc,
+                //    TopKAccuracy,
+                //    Rms,
+                //    LossFn,
+                //    RSquared,
+                //    LogLoss,
+                //    LogLossReduction,
+                //    Ndcg,
+                //    Dcg,
+                //    PositivePrecision,
+                //    PositiveRecall,
+                //    NegativePrecision,
+                //    NegativeRecall,
+                //    DrAtK,
+                //    DrAtPFpr,
+                //    DrAtNumPos,
+                //    NumAnomalies,
+                //    ThreshAtK,
+                //    ThreshAtP,
+                //    ThreshAtNumPos,
+                //    Nmi,
+                //    AvgMinScore,
+                //    Dbi
+                //};
 
                 [Argument(ArgumentType.Required, HelpText = "Supported metric for evaluator.", ShortName = "metric")]
-                public Metrics Metric;
+                public SupportedMetric Metric;
 
                 [Argument(ArgumentType.Required, HelpText = "AutoML engine (pipeline optimizer) that generates next candidates.", ShortName = "engine")]
                 public ISupportIPipelineOptimizerFactory Engine;
@@ -270,8 +273,14 @@ namespace Microsoft.ML.Runtime.PipelineInference
                 public IMlState CreateComponent(IHostEnvironment env) => new AutoMlMlState(env, this);
             }
 
+            //public AutoMlMlState(IHostEnvironment env, Arguments args)
+            //    : this(env, SupportedMetric.ByName(Enum.GetName(typeof(Arguments.Metrics), args.Metric)), args.Engine.CreateComponent(env),
+            //          args.TerminatorArgs.CreateComponent(env), args.TrainerKind, requestedLearners: args.RequestedLearners)
+            //{
+            //}
+
             public AutoMlMlState(IHostEnvironment env, Arguments args)
-                : this(env, SupportedMetric.ByName(Enum.GetName(typeof(Arguments.Metrics), args.Metric)), args.Engine.CreateComponent(env),
+                : this(env, args.Metric, args.Engine.CreateComponent(env),
                       args.TerminatorArgs.CreateComponent(env), args.TrainerKind, requestedLearners: args.RequestedLearners)
             {
             }
